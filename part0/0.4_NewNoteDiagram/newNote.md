@@ -3,9 +3,11 @@
         participant browser
         participant server
 
-        browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/notes
+        Note right of browser: The user inputs data and clicks *Save*
+
+        browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/new_note
         activate server
-        server-->>browser: HTML document
+        server-->>browser: Payload (Request body data -> "note": <your note>)
         deactivate server
 
         browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.css
