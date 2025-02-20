@@ -7,6 +7,9 @@ const Button = ({text, handleClick}) => <button onClick={handleClick}>{text}</bu
 const Statistic = ({text, value}) => <p>{text}: {value}</p>
 
 const Statistics = ({statistics}) => {
+  if( statistics.good + statistics.neutral + statistics.bad === 0 ){
+    return <p>No feedback given</p>
+  }
   return (
     <div>
       <Statistic text='good' value={statistics.good}/>
