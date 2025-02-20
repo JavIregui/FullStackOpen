@@ -3,6 +3,7 @@
         participant browser
         participant server
 
+        Note right of browser: The user inputs data and clicks "Save"
         Note right of browser: The browser executes the form submission code:
         Note right of browser: The browser modifies the DOM to add the new note to the list
         Note right of browser: The browser sends the new note to the server
