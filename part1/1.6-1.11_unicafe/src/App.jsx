@@ -4,7 +4,7 @@ const Title = ({title}) => <h1>{title}</h1>
 
 const Button = ({text, handleClick}) => <button onClick={handleClick}>{text}</button>
 
-const Statistic = ({text, value}) => <p>{text}: {value}</p>
+const StatisticLine = ({text, value}) => <p>{text}: {value}</p>
 
 const Statistics = ({statistics}) => {
   if( statistics.good + statistics.neutral + statistics.bad === 0 ){
@@ -12,12 +12,12 @@ const Statistics = ({statistics}) => {
   }
   return (
     <div>
-      <Statistic text='good' value={statistics.good}/>
-      <Statistic text='neutral' value={statistics.neutral}/>
-      <Statistic text='bad' value={statistics.bad}/>
-      <Statistic text='all' value={statistics.good + statistics.neutral + statistics.bad}/>
-      <Statistic text='average' value={(statistics.good - statistics.bad) / (statistics.good + statistics.neutral + statistics.bad)}/>
-      <Statistic text='positive' value={statistics.good / (statistics.good + statistics.neutral + statistics.bad) * 100 + ' %'}/>
+      <StatisticLine text='good' value={statistics.good}/>
+      <StatisticLine text='neutral' value={statistics.neutral}/>
+      <StatisticLine text='bad' value={statistics.bad}/>
+      <StatisticLine text='all' value={statistics.good + statistics.neutral + statistics.bad}/>
+      <StatisticLine text='average' value={(statistics.good - statistics.bad) / (statistics.good + statistics.neutral + statistics.bad)}/>
+      <StatisticLine text='positive' value={statistics.good / (statistics.good + statistics.neutral + statistics.bad) * 100 + ' %'}/>
     </div>
   )
 }
