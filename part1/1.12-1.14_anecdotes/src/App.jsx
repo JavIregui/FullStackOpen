@@ -16,7 +16,15 @@ const App = () => {
    
   const [selected, setSelected] = useState(0)
 
-  const randomAnecdote = () => setSelected(Math.floor(Math.random() * anecdotes.length))
+  const randomAnecdote = () => {
+    let random = selected
+
+    while (random === selected) {
+      random = Math.floor(Math.random() * anecdotes.length)
+    }
+    
+    setSelected(random)
+  }
 
   return (
     <div>
