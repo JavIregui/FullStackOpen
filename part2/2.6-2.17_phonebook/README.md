@@ -5,3 +5,5 @@
 - Stateful components
 - Using array methods
 - Managing Forms and Fields
+- Using JSON-Server Database
+- Using useEffect and Axios for fetching
