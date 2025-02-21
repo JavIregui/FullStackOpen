@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+
+import personService from './services/persons'
+
 import Title from './components/Title'
 import Filter from './components/Filter'
 import Form from './components/Form'
@@ -12,12 +14,13 @@ const App = () => {
 	const [searchName, setSearchName] = useState('')
 
 	useEffect(() => {
-		axios
-		  	.get('http://localhost:3001/persons')
-		  	.then(response => {
-				setPersons(response.data)
-		  	})
-	  }, [])
+		personService
+		.getAll()
+		.then(initialPersons => {
+			setPersons(initialPersons)
+		})
+
+	}, [])
 
 	const contactsToShow = searchName === '' ? persons : persons.filter(person => person.name.includes(searchName))
 
@@ -35,13 +38,13 @@ const App = () => {
 			id: persons.length + 1,
 		}
 
-		axios
-        	.post('http://localhost:3001/persons', personObject)
-            .then(response => {
-                setPersons(persons.concat(response.data))
-                setNewName('')
-                setNewNumber('')
-            })
+		personService
+		.create(personObject)
+		.then(returnedPerson => {
+			setPersons(persons.concat(returnedPerson))
+			setNewName('')
+			setNewNumber('')
+		})
 	}
 
 	const handleNameChange = (event) => {
