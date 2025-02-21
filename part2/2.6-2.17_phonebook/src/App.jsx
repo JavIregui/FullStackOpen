@@ -13,10 +13,10 @@ const App = () => {
 
 	useEffect(() => {
 		axios
-		  .get('http://localhost:3001/persons')
-		  .then(response => {
-			setPersons(response.data)
-		  })
+		  	.get('http://localhost:3001/persons')
+		  	.then(response => {
+				setPersons(response.data)
+		  	})
 	  }, [])
 
 	const contactsToShow = searchName === '' ? persons : persons.filter(person => person.name.includes(searchName))
@@ -35,9 +35,13 @@ const App = () => {
 			id: persons.length + 1,
 		}
 
-		setPersons(persons.concat(personObject))
-		setNewName('')
-		setNewNumber('')
+		axios
+        	.post('http://localhost:3001/persons', personObject)
+            .then(response => {
+                setPersons(persons.concat(response.data))
+                setNewName('')
+                setNewNumber('')
+            })
 	}
 
 	const handleNameChange = (event) => {
