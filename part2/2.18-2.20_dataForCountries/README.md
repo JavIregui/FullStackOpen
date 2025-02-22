@@ -11,3 +11,4 @@
 - Services module for backend connection
 - CSS Styles
 - Error handling
+- External API with pretected API Keys in Environment variables

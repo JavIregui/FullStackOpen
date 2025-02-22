@@ -1,3 +1,6 @@
+import Country from "./Country"
+import Info from "./Info"
+
 const Countries = ({ countries, search }) => {
     const exact = countries.filter(country => country.name.common.toLowerCase() === search.toLowerCase())
 
@@ -23,22 +26,12 @@ const Countries = ({ countries, search }) => {
         }
 
         return (
-            <div>
-                <h1>{country.name.common}</h1>
-                <p>Capital: {country.capital}</p>
-                <p>Area: {country.area} km²</p>
-                <p>Population: {country.population}</p>
-                <h2>Languages</h2>
-                <ul>
-                    {Object.values(country.languages).map(language => <li key={language}>{language}</li>)}
-                </ul>
-                <img src={country.flags.png} alt={country.name.common} width="250px" />
-            </div>
+            <Info country={country}/>
         )
     } else {
         return (
             <div>
-                {countries.map(country => <p key={country.name.common}> {country.name.common} </p>)}
+                {countries.map(country => <Country key={country.name.common} country={country}/>)}
             </div>
         )
     }
