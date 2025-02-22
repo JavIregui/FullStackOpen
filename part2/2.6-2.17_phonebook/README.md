@@ -4,6 +4,7 @@
 - Using Destructuring on Props
 - Stateful components
 - Using array methods
+- Using conditional rendering
 - Managing Forms and Fields
 - Using JSON-Server Database
 - Using useEffect and Axios for fetching
