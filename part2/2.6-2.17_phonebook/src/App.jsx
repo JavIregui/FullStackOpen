@@ -22,7 +22,14 @@ const App = () => {
 		.then(initialPersons => {
 			setPersons(initialPersons)
 		})
-
+		.catch(error => {
+			setMessage('Failed to fetch data from server')
+			setError(true)
+			setTimeout(() => {
+				setMessage(null)
+			}
+			, 3000)
+		})
 	}, [])
 
 	const contactsToShow = searchName === '' ? persons : persons.filter(person => person.name.includes(searchName))
@@ -48,6 +55,18 @@ const App = () => {
 					}
 					, 3000)
                 })
+				.catch(error => {
+					setPersons(persons.filter(person => person.id !== existingPerson.id))
+					setNewName('')
+					setNewNumber('')
+
+					setMessage(`Information of ${existingPerson.name} has already been removed from server`)
+					setError(true)
+					setTimeout(() => {
+						setMessage(null)
+					}
+					, 3000)
+				})
             }
             return
         }
@@ -72,6 +91,18 @@ const App = () => {
 			}
 			, 3000)
 		})
+		.catch(error => {
+			setPersons(persons.filter(person => person.id !== personObject.id))
+			setNewName('')
+			setNewNumber('')
+
+			setMessage('Failed to add person to server')
+			setError(true)
+			setTimeout(() => {
+				setMessage(null)
+			}
+			, 3000)
+		})
 	}
 
 	const deletePerson = (id) => {
@@ -89,6 +120,16 @@ const App = () => {
 				}
 				, 3000)
             })
+			.catch(error => {
+				setPersons(persons.filter(p => p.id !== id))
+
+				setMessage(`Information of ${person.name} has already been removed from server`)
+				setError(true)
+				setTimeout(() => {
+					setMessage(null)
+				}
+				, 3000)
+			})
         }
     }
 
