@@ -4,7 +4,10 @@ const morgan = require('morgan')
 const app = express()
 
 app.use(express.json())
-app.use(morgan('tiny'))
+
+morgan.token('body', (req) => JSON.stringify(req.body))
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
+
 
 let persons = [
     { 
@@ -90,4 +93,4 @@ app.delete('/api/persons/:id', (request, response) => {
 
 const PORT = 3001
 app.listen(PORT)
-console.log(`Server running on port ${PORT}`)
+console.log(`Server running on port ${PORT}...`)
