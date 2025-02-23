@@ -60,7 +60,7 @@ const App = () => {
 					setNewName('')
 					setNewNumber('')
 
-					setMessage(`Information of ${existingPerson.name} has already been removed from server`)
+					setMessage(error.response.data.error)
 					setError(true)
 					setTimeout(() => {
 						setMessage(null)
@@ -96,7 +96,7 @@ const App = () => {
 			setNewName('')
 			setNewNumber('')
 
-			setMessage('Failed to add person to server')
+			setMessage(error.response.data.error)
 			setError(true)
 			setTimeout(() => {
 				setMessage(null)
