@@ -1,7 +1,20 @@
+const mongoose = require('mongoose')
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
 
+// DATABASE CONNECTION
+const url = process.env.MONGODB_URI
+mongoose.set('strictQuery',false)
+mongoose.connect(url)
+
+const personSchema = new mongoose.Schema({
+	name: String,
+	number: String,
+})
+const Person = mongoose.model('Person', personSchema, 'contacts')
+
+// EXPRESS SERVER
 const app = express()
 
 var corsOptions = {
@@ -51,7 +64,9 @@ const generateId = () => {
 }
 
 app.get('/api/persons', (request, response) => {
-	response.json(persons)
+	Person.find({}).then(persons => {
+		response.json(persons)
+	})
 })
 
 app.get('/api/persons/:id', (request, response) => {
