@@ -15,6 +15,7 @@ morgan.token('body', (req) => JSON.stringify(req.body))
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
 var corsOptions = {
+	// Need to add the frontend URL here?
 	origin: 'http://localhost:5173',
 	optionsSuccessStatus: 200
 }
