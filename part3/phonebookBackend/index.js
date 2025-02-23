@@ -21,12 +21,14 @@ var corsOptions = {
 }
 app.use(cors(corsOptions))
 
-// app.get('/info', (request, response) => {
-// 	response.send(`
-// 		<p>Phonebook has info for ${persons.length} people</p>
-// 		<p>${new Date()}</p>
-// 	`)
-// })
+app.get('/info', (request, response) => {
+	Person.find({}).then(persons => {
+		response.send(`
+			<p>Phonebook has info for ${persons.length} people</p>
+			<p>${new Date()}</p>
+		`)
+	})
+})
 
 app.get('/api/persons', (request, response) => {
 	Person.find({}).then(persons => {
