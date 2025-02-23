@@ -10,3 +10,4 @@ Deployed [here](https://fullstackopen-jhm1.onrender.com)
 - Uses static 'dist' folder
 - REST API
 - Port management with ENV variables
+- Deployed on Render
