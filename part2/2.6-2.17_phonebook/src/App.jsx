@@ -56,7 +56,6 @@ const App = () => {
 					, 3000)
                 })
 				.catch(error => {
-					setPersons(persons.filter(person => person.id !== existingPerson.id))
 					setNewName('')
 					setNewNumber('')
 
