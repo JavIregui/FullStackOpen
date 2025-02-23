@@ -12,3 +12,4 @@ Deployed [here](https://fullstackopen-jhm1.onrender.com)
 - Port management with ENV variables
 - Deployed on Render
 - Mongoose to work with MongoDB deployed with Atlas
+- Middleware
