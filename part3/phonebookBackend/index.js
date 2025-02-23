@@ -26,6 +26,13 @@ let persons = [
     }
 ]
 
+app.get('/info', (request, response) => {
+	response.send(`
+		<p>Phonebook has info for ${persons.length} people</p>
+		<p>${new Date()}</p>
+	`)
+})
+
 const generateId = () => {
 	const maxId = persons.length > 0
 		? Math.max(...persons.map(n => Number(n.id)))
