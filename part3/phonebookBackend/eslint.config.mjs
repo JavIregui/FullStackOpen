@@ -1,8 +1,7 @@
-import globals from "globals"
-import js from '@eslint/js'
+import globals from "globals";
 import stylisticJs from '@stylistic/eslint-plugin-js'
+import js from '@eslint/js'
 
-/** @type {import('eslint').Linter.Config[]} */
 export default [
   js.configs.recommended,
   {
@@ -34,6 +33,18 @@ export default [
         'error',
         'never'
       ],
+      'eqeqeq': 'error',
+      'no-trailing-spaces': 'error',
+      'object-curly-spacing': [
+        'error', 'always'
+      ],
+      'arrow-spacing': [
+        'error', { 'before': true, 'after': true },
+      ],
+      'no-console': 'off',
     },
+  },
+  { 
+    ignores: ["dist/**", "build/**"],
   },
 ]
