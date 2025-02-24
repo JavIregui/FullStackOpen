@@ -30,13 +30,13 @@ app.get('/info', (request, response) => {
 	})
 })
 
-app.get('/api/persons', (request, response) => {
+app.get('/api/persons', (request, response, next) => {
 	Person.find({}).then(persons => {
 		response.json(persons)
 	})
-	.catch(error => {
-		next(error)
-	})
+		.catch(error => {
+			next(error)
+		})
 })
 
 app.get('/api/persons/:id', (request, response, next) => {
@@ -62,22 +62,22 @@ app.post('/api/persons', (request, response, next) => {
 	})
 
 	person.save()
-	.then(savedPerson => {
-		response.json(savedPerson)
-	})
-	.catch(error => {
-		next(error)
-	})
+		.then(savedPerson => {
+			response.json(savedPerson)
+		})
+		.catch(error => {
+			next(error)
+		})
 })
 
 app.delete('/api/persons/:id', (request, response, next) => {
 	Person.findByIdAndDelete(request.params.id)
-	.then(result => {
-		response.status(204).end()
-	})
-	.catch(error => {
-		next(error)
-	})
+		.then(result => {
+			response.status(204).end()
+		})
+		.catch(error => {
+			next(error)
+		})
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
@@ -88,13 +88,13 @@ app.put('/api/persons/:id', (request, response, next) => {
 		{ name, number },
 		{ new: true, runValidators: true, context: 'query' }
 	)
-	.then(updatedPerson => {
-		response.json(updatedPerson)
-	})
-	.catch(error => {
-		next(error)
-	})
-  })
+		.then(updatedPerson => {
+			response.json(updatedPerson)
+		})
+		.catch(error => {
+			next(error)
+		})
+})
 
 const unknownEndpoint = (request, response) => {
 	response.status(404).send({ error: 'unknown endpoint' })
