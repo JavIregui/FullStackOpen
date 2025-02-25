@@ -24,6 +24,9 @@ app.use(express.json())
 
 app.use(middleware.requestLogger)
 
+const usersRouter = require('./controllers/users')
+app.use('/api/users', usersRouter)
+
 const blogsRouter = require('./controllers/blogs')
 app.use('/api/blogs', blogsRouter)
 

@@ -2,7 +2,10 @@ const { test, after, beforeEach, describe } = require('node:test')
 const assert = require('node:assert')
 
 const mongoose = require('mongoose')
+const bcrypt = require('bcrypt')
+
 const Blog = require('../models/blog')
+const User = require('../models/user')
 const helper = require('./test_helper')
 
 const supertest = require('supertest')
@@ -10,13 +13,136 @@ const app = require('../app')
 
 const api = supertest(app)
 
+beforeEach(async () => {
+	await User.deleteMany({})
+
+	const passwordHash = await bcrypt.hash('password', 10)
+	const user = new User({ username: 'root', name: 'Root User', passwordHash })
+
+	await user.save()
+})
+
+describe('The Auth works', () => {
+	describe('when there is initially one user in db', () => {
+
+		test('users are returned as json', async () => {
+			await api.get('/api/users')
+				.expect(200)
+				.expect('Content-Type', /application\/json/)
+		})
+
+		test('unique identifier property of the user posts is named id and not _id', async () => {
+			const response = await api.get('/api/users')
+			const users = response.body
+
+			users.forEach(user => {
+				assert(user.id)
+				assert(!user._id)
+			})
+		})
+
+		test('password or passwordHash are not returned but the rest of the data is', async () => {
+			const response = await api.get('/api/users')
+			const users = response.body
+
+			users.forEach(user => {
+				assert(!user.password)
+				assert(!user.passwordHash)
+				assert(user.username)
+				assert(user.name)
+				assert(user.id)
+				assert(user.blogs)
+			})
+		})
+
+		test('all users are returned', async () => {
+			const response = await api.get('/api/users')
+
+			assert.strictEqual(response.body.length, 1)
+		})
+
+		test('a specific user is within the returned users', async () => {
+			const response = await api.get('/api/users')
+
+			const names = response.body.map(r => r.name)
+			assert(names.includes('Root User'))
+		})
+
+		describe('addition of a new user', () => {
+			test('creation succeeds with a fresh username', async () => {
+				const usersAtStart = await helper.usersInDb()
+	
+				const newUser = {
+					username: 'newUser',
+					name: 'New User',
+					password: 'testpassword',
+				}
+	
+				await api.post('/api/users')
+					.send(newUser)
+					.expect(201)
+					.expect('Content-Type', /application\/json/)
+	
+				const usersAtEnd = await helper.usersInDb()
+				assert.strictEqual(usersAtEnd.length, usersAtStart.length + 1)
+	
+				const usernames = usersAtEnd.map(u => u.username)
+				assert(usernames.includes(newUser.username))
+			})
+	
+			test('creation fails with statuscode 400 if username already taken', async () => {
+				const usersAtStart = await helper.usersInDb()
+	
+				const newUser = {
+					username: 'root',
+					name: 'New Root',
+					password: 'testpassword',
+				}
+	
+				const result = await api.post('/api/users')
+					.send(newUser)
+					.expect(400)
+					.expect('Content-Type', /application\/json/)
+	
+				const usersAtEnd = await helper.usersInDb()
+				assert(result.body.error.includes('expected `username` to be unique'))
+	
+				assert.strictEqual(usersAtEnd.length, usersAtStart.length)
+			})
+
+			test('fails with status code 400 if data invalid', async () => {
+				const usersAtStart = await helper.usersInDb()
+
+				const newUser = {
+					name: 'New User',
+					password: 'testpassword',
+				}
+
+				await api.post('/api/users')
+					.send(newUser)
+					.expect(400)
+
+				const usersAtEnd = await helper.usersInDb()
+				assert.deepStrictEqual(usersAtEnd, usersAtStart)
+			})
+		})
+	})
+})
+
 describe('The REST API works', () => {
 	describe('when there are some blogs saved initially', () => {
+
+		let id;
 
 		beforeEach(async () => {
 			await Blog.deleteMany({})
 
-			await Blog.insertMany(helper.initialBlogs)
+			const users = await helper.usersInDb()
+			const user = users[0]
+			id = user.id
+			
+			const initialBlogs = await helper.initialBlogs(id)
+			await Blog.insertMany(initialBlogs)
 
 			// OR
 			// const blogObjects = helper.initialBlogs
@@ -52,14 +178,14 @@ describe('The REST API works', () => {
 		test('all blogs are returned', async () => {
 			const response = await api.get('/api/blogs')
 
-			assert.strictEqual(response.body.length, helper.initialBlogs.length)
+			assert.strictEqual(response.body.length, helper.blogs.length)
 		})
 
 		test('a specific blog is within the returned blogs', async () => {
 			const response = await api.get('/api/blogs')
 
 			const titles = response.body.map(r => r.title)
-			assert(titles.includes(helper.initialBlogs[0].title))
+			assert(titles.includes(helper.blogs[0].title))
 		})
 
 		describe('viewing a specific blog', () => {
@@ -73,11 +199,13 @@ describe('The REST API works', () => {
 					.expect(200)
 					.expect('Content-Type', /application\/json/)
 
-				assert.deepStrictEqual(resultBlog.body, blogToView)
+				const blog = { ...blogToView, author: resultBlog.body.author }
+
+				assert.deepStrictEqual(resultBlog.body, blog)
 			})
 
 			test('fails with statuscode 404 if blog does not exist', async () => {
-				const validNonexistingId = await helper.nonExistingId()
+				const validNonexistingId = await helper.nonExistingId(id)
 
 				await api.get(`/api/blogs/${validNonexistingId}`)
 					.expect(404)
@@ -96,7 +224,7 @@ describe('The REST API works', () => {
 			test('succeeds with valid data', async () => {
 				const newBlog = {
 					'title': 'BLOG3',
-					'author': 'Me',
+					'author': id,
 					'url': 'test.com/3',
 					'likes': 24
 				}
@@ -107,7 +235,7 @@ describe('The REST API works', () => {
 					.expect('Content-Type', /application\/json/)
 
 				const blogsAtEnd = await helper.blogsInDb()
-				assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1)
+				assert.strictEqual(blogsAtEnd.length, helper.blogs.length + 1)
 
 				let blog = { ...newBlog, id: resultBlog.body.id }
 				assert.deepStrictEqual(resultBlog.body, blog)
@@ -116,7 +244,7 @@ describe('The REST API works', () => {
 			test('succeds with likes 0 if not specified', async () => {
 				const newBlog = {
 					'title': 'BLOG3',
-					'author': 'Me',
+					'author': id,
 					'url': 'test.com/3',
 				}
 
@@ -141,7 +269,7 @@ describe('The REST API works', () => {
 					.expect(400)
 
 				const blogsAtEnd = await helper.blogsInDb()
-				assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
+				assert.strictEqual(blogsAtEnd.length, helper.blogs.length)
 			})
 		})
 
@@ -153,7 +281,7 @@ describe('The REST API works', () => {
 
 				const newBlog = {
 					'title': 'EditedBlog',
-					'author': 'EditedAuthor',
+					'author': id,
 					'url': 'EditedUrl',
 					'likes': 100
 				}
@@ -173,7 +301,7 @@ describe('The REST API works', () => {
 
 				const newBlog = {
 					'title': 'EditedBlog',
-					'author': 'EditedAuthor',
+					'author': id,
 				}
 
 				const resultBlog = await api.put(`/api/blogs/${blogToUpdate.id}`)
@@ -191,7 +319,7 @@ describe('The REST API works', () => {
 			})
 
 			test('fails with statuscode 404 if blog does not exist', async () => {
-				const validNonexistingId = await helper.nonExistingId()
+				const validNonexistingId = await helper.nonExistingId(id)
 
 				await api.put(`/api/blogs/${validNonexistingId}`)
 					.expect(404)
@@ -219,7 +347,7 @@ describe('The REST API works', () => {
 				const titles = blogsAtEnd.map(r => r.title)
 				assert(!titles.includes(blogToDelete.title))
 
-				assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length - 1)
+				assert.strictEqual(blogsAtEnd.length, helper.blogs.length - 1)
 			})
 		})
 
