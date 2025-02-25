@@ -216,7 +216,7 @@ describe('The REST API works', () => {
 					.expect(200)
 					.expect('Content-Type', /application\/json/)
 
-				const blog = { ...blogToView, author: resultBlog.body.author }
+				const blog = { ...blogToView, user: resultBlog.body.user }
 
 				assert.deepStrictEqual(resultBlog.body, blog)
 			})
@@ -241,7 +241,8 @@ describe('The REST API works', () => {
 			test('succeeds with valid data', async () => {
 				const newBlog = {
 					'title': 'BLOG3',
-					'author': id,
+					'author': 'Author3',
+					'user': id,
 					'url': 'test.com/3',
 					'likes': 24
 				}
@@ -261,7 +262,8 @@ describe('The REST API works', () => {
 			test('succeds with likes 0 if not specified', async () => {
 				const newBlog = {
 					'title': 'BLOG3',
-					'author': id,
+					'author': 'Author3',
+					'user': id,
 					'url': 'test.com/3',
 				}
 
@@ -298,7 +300,8 @@ describe('The REST API works', () => {
 
 				const newBlog = {
 					'title': 'EditedBlog',
-					'author': id,
+					'author': 'EditedAuthor',
+					'user': id,
 					'url': 'EditedUrl',
 					'likes': 100
 				}
@@ -318,7 +321,7 @@ describe('The REST API works', () => {
 
 				const newBlog = {
 					'title': 'EditedBlog',
-					'author': id,
+					'user': id,
 				}
 
 				const resultBlog = await api.put(`/api/blogs/${blogToUpdate.id}`)
@@ -329,6 +332,7 @@ describe('The REST API works', () => {
 				let blog = {
 					...newBlog,
 					id: resultBlog.body.id,
+					'author': blogToUpdate.author,
 					'url': blogToUpdate.url,
 					'likes': blogToUpdate.likes
 				}

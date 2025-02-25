@@ -4,13 +4,15 @@ const User = require('../models/user')
 const blogs = [
 	{
 		'title': 'HTML1',
-		'author': '',
+		'author': 'Author1',
+		'user': '',
 		'url': 'test.com/1',
 		'likes': 12
 	},
 	{
 		'title': 'Blog2',
-		'author': '',
+		'author': 'Author2',
+		'user': '',
 		'url': 'test.com/2',
 		'likes': 20
 	},
@@ -19,7 +21,8 @@ const blogs = [
 const initialBlogs = async (userId) => {
 	const initialBlogs = blogs.map(blog => new Blog({ 
         title: blog.title,
-        author: userId,
+		author: blog.author,
+        user: userId,
         url: blog.url,
         likes: blog.likes
     }))
@@ -39,7 +42,8 @@ const usersInDb = async () => {
 const nonExistingId = async (userId) => {
 	const blog = new Blog({
 		title: 'id test',
-		author: userId,
+		author: 'test author',
+		user: userId,
 		url: 'test.com/200',
 		likes: 10
 	})

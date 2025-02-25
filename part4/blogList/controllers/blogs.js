@@ -4,13 +4,13 @@ const User = require('../models/user')
 
 blogsRouter.get('/', async (request, response) => {
 	const blogs = await Blog.find({})
-		.populate('author', { username: 1, name: 1 })
+		.populate('user', { username: 1, name: 1 })
 	response.json(blogs)
 })
 
 blogsRouter.get('/:id', async (request, response) => {
 	const blog = await Blog.findById(request.params.id)
-		.populate('author', { username: 1, name: 1 })
+		.populate('user', { username: 1, name: 1 })
 	if (blog) {
 		response.json(blog)
 	}
@@ -22,7 +22,7 @@ blogsRouter.get('/:id', async (request, response) => {
 blogsRouter.post('/', async (request, response) => {
 	const body = request.body
 
-		const user = await User.findById(body.author)
+		const user = await User.findById(body.user)
 
 		if(!user) {
 			return response.status(400).end()
@@ -30,7 +30,8 @@ blogsRouter.post('/', async (request, response) => {
 
 		const blog = new Blog({
 			title: body.title,
-			author: user.id,
+			author: body.author,
+			user: user.id,
 			url: body.url,
 			likes: body.likes || 0,
 		})
@@ -53,6 +54,7 @@ blogsRouter.put('/:id', async (request, response) => {
 	const blog = {
 		title: body.title || existingBlog.title,
 		author: body.author || existingBlog.author,
+		user: body.user || existingBlog.user,
 		url: body.url || existingBlog.url,
 		likes: body.likes || existingBlog.likes,
 	}
