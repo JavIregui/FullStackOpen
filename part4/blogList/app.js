@@ -5,12 +5,12 @@ require('express-async-errors')
 const mongoose = require('mongoose')
 mongoose.set('strictQuery', false)
 mongoose.connect(config.MONGODB_URI)
-  .then(() => {
-    logger.info('connected to MongoDB')
-  })
-  .catch((error) => {
-    logger.error('error connecting to MongoDB:', error.message)
-  })
+	.then(() => {
+		logger.info('connected to MongoDB')
+	})
+	.catch((error) => {
+		logger.error('error connecting to MongoDB:', error.message)
+	})
 
 const express = require('express')
 const app = express()
