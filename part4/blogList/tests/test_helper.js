@@ -19,13 +19,13 @@ const blogs = [
 ]
 
 const initialBlogs = async (userId) => {
-	const initialBlogs = blogs.map(blog => new Blog({ 
-        title: blog.title,
+	const initialBlogs = blogs.map(blog => new Blog({
+		title: blog.title,
 		author: blog.author,
-        user: userId,
-        url: blog.url,
-        likes: blog.likes
-    }))
+		user: userId,
+		url: blog.url,
+		likes: blog.likes
+	}))
 	return initialBlogs
 }
 

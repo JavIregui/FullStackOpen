@@ -3,6 +3,7 @@ const assert = require('node:assert')
 
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 
 const Blog = require('../models/blog')
 const User = require('../models/user')
@@ -13,13 +14,22 @@ const app = require('../app')
 
 const api = supertest(app)
 
+let token
+
 beforeEach(async () => {
 	await User.deleteMany({})
 
 	const passwordHash = await bcrypt.hash('password', 10)
 	const user = new User({ username: 'root', name: 'Root User', passwordHash })
 
-	await user.save()
+	const savedUser = await user.save()
+
+	const userForToken = {
+        username: savedUser.username,
+        id: savedUser._id,
+    }
+
+	token = jwt.sign(userForToken, process.env.SECRET)
 })
 
 describe('The Auth works', () => {
@@ -71,42 +81,42 @@ describe('The Auth works', () => {
 		describe('addition of a new user', () => {
 			test('creation succeeds with a fresh username', async () => {
 				const usersAtStart = await helper.usersInDb()
-	
+
 				const newUser = {
 					username: 'newUser',
 					name: 'New User',
 					password: 'testpassword',
 				}
-	
+
 				await api.post('/api/users')
 					.send(newUser)
 					.expect(201)
 					.expect('Content-Type', /application\/json/)
-	
+
 				const usersAtEnd = await helper.usersInDb()
 				assert.strictEqual(usersAtEnd.length, usersAtStart.length + 1)
-	
+
 				const usernames = usersAtEnd.map(u => u.username)
 				assert(usernames.includes(newUser.username))
 			})
-	
+
 			test('creation fails with statuscode 400 if username already taken', async () => {
 				const usersAtStart = await helper.usersInDb()
-	
+
 				const newUser = {
 					username: 'root',
 					name: 'New Root',
 					password: 'testpassword',
 				}
-	
+
 				const result = await api.post('/api/users')
 					.send(newUser)
 					.expect(400)
 					.expect('Content-Type', /application\/json/)
-	
+
 				const usersAtEnd = await helper.usersInDb()
 				assert(result.body.error.includes('expected `username` to be unique'))
-	
+
 				assert.strictEqual(usersAtEnd.length, usersAtStart.length)
 			})
 
@@ -149,7 +159,7 @@ describe('The Auth works', () => {
 describe('The REST API works', () => {
 	describe('when there are some blogs saved initially', () => {
 
-		let id;
+		let id
 
 		beforeEach(async () => {
 			await Blog.deleteMany({})
@@ -157,7 +167,7 @@ describe('The REST API works', () => {
 			const users = await helper.usersInDb()
 			const user = users[0]
 			id = user.id
-			
+
 			const initialBlogs = await helper.initialBlogs(id)
 			await Blog.insertMany(initialBlogs)
 
@@ -248,6 +258,7 @@ describe('The REST API works', () => {
 				}
 
 				const resultBlog = await api.post('/api/blogs')
+					.set('Authorization', `Bearer ${token}`)
 					.send(newBlog)
 					.expect(201)
 					.expect('Content-Type', /application\/json/)
@@ -268,6 +279,7 @@ describe('The REST API works', () => {
 				}
 
 				const resultBlog = await api.post('/api/blogs')
+					.set('Authorization', `Bearer ${token}`)
 					.send(newBlog)
 					.expect(201)
 					.expect('Content-Type', /application\/json/)
@@ -282,8 +294,8 @@ describe('The REST API works', () => {
 					'likes': 24
 				}
 
-				await api
-					.post('/api/blogs')
+				await api.post('/api/blogs')
+					.set('Authorization', `Bearer ${token}`)
 					.send(newBlog)
 					.expect(400)
 
