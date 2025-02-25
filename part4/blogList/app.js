@@ -1,5 +1,6 @@
 const config = require('./utils/config')
 const logger = require('./utils/logger')
+require('express-async-errors')
 
 const mongoose = require('mongoose')
 mongoose.set('strictQuery', false)
@@ -22,9 +23,6 @@ app.use(express.static('dist'))
 app.use(express.json())
 
 app.use(middleware.requestLogger)
-const morgan = require('morgan')
-morgan.token('body', (req) => JSON.stringify(req.body))
-app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
 const blogsRouter = require('./controllers/blogs')
 app.use('/api/blogs', blogsRouter)

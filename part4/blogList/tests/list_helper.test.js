@@ -90,7 +90,6 @@ describe('favorite blog', () => {
 
 	test('when list has only one blog, equals that blog', () => {
 		const result = listHelper.favoriteBlog(listWithOneBlog)
-		console.log(result)
 		assert.deepStrictEqual(result, listWithOneBlog[0])
 	})
 

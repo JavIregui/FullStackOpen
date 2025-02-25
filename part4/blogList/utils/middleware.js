@@ -1,6 +1,10 @@
+require('dotenv').config()
 const logger = require('./logger')
 
 const requestLogger = (request, response, next) => {
+    if (process.env.NODE_ENV === 'test') {
+        return next()
+    }
     logger.info('---')
     logger.info('Method:', request.method)
     logger.info('Path:  ', request.path)
