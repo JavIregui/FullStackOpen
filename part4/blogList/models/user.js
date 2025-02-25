@@ -1,9 +1,11 @@
+const { min } = require('lodash')
 const mongoose = require('mongoose')
 
 userSchema = new mongoose.Schema({
     username: {
         type: String,
         required: true,
+        minLength: 3,
         unique: true
     },
     name: {

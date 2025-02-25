@@ -110,12 +110,29 @@ describe('The Auth works', () => {
 				assert.strictEqual(usersAtEnd.length, usersAtStart.length)
 			})
 
-			test('fails with status code 400 if data invalid', async () => {
+			test('fails with status code 400 if missing data', async () => {
 				const usersAtStart = await helper.usersInDb()
 
 				const newUser = {
 					name: 'New User',
 					password: 'testpassword',
+				}
+
+				await api.post('/api/users')
+					.send(newUser)
+					.expect(400)
+
+				const usersAtEnd = await helper.usersInDb()
+				assert.deepStrictEqual(usersAtEnd, usersAtStart)
+			})
+
+			test('fails with status code 400 if data invalid', async () => {
+				const usersAtStart = await helper.usersInDb()
+
+				const newUser = {
+					username: 'ro',
+					name: 'New Root',
+					password: 'te',
 				}
 
 				await api.post('/api/users')
