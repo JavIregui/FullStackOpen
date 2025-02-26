@@ -7,6 +7,12 @@ const User = require('../models/user')
 loginRouter.post('/', async (request, response) => {
 	const { username, password } = request.body
 
+	if (!username || !password) {
+		return response.status(401).json({
+			error: 'missing credentials'
+		})
+	}
+
 	const user = await User.findOne({ username: username })
 	const passwordCorrect = user === null
 		? false
