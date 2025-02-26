@@ -25,9 +25,9 @@ beforeEach(async () => {
 	const savedUser = await user.save()
 
 	const userForToken = {
-        username: savedUser.username,
-        id: savedUser._id,
-    }
+		username: savedUser.username,
+		id: savedUser._id,
+	}
 
 	token = jwt.sign(userForToken, process.env.SECRET)
 })
@@ -368,19 +368,83 @@ describe('The REST API works', () => {
 		})
 
 		describe('deletion of a blog', () => {
-			test('succeeds with status code 204 if id is valid', async () => {
+			describe('if theres a valid token', () => {
+				test('succeeds with status code 204 if id is valid', async () => {
+					const blogsAtStart = await helper.blogsInDb()
+					const blogToDelete = blogsAtStart[0]
+
+					await api.delete(`/api/blogs/${blogToDelete.id}`)
+						.set('Authorization', `Bearer ${token}`)
+						.expect(204)
+
+					const blogsAtEnd = await helper.blogsInDb()
+
+					const titles = blogsAtEnd.map(r => r.title)
+					assert(!titles.includes(blogToDelete.title))
+
+					assert.strictEqual(blogsAtEnd.length, helper.blogs.length - 1)
+				})
+				test('fails with statuscode 404 if blog does not exist', async () => {
+					const validNonexistingId = await helper.nonExistingId(id)
+
+					await api.delete(`/api/blogs/${validNonexistingId}`)
+						.set('Authorization', `Bearer ${token}`)
+						.expect(404)
+
+					const blogsAtEnd = await helper.blogsInDb()
+
+					assert.strictEqual(blogsAtEnd.length, helper.blogs.length)
+				})
+			})
+
+			test('fails with statuscode 401 if token is not the creator', async () => {
+				const passwordHash = await bcrypt.hash('password', 10)
+				const user = new User({ username: 'deleteTest', name: 'Test User', passwordHash })
+
+				const newUser = await user.save()
+
+				const userForToken = {
+					username: newUser.username,
+					id: newUser._id,
+				}
+
+				badToken = jwt.sign(userForToken, process.env.SECRET)
+
 				const blogsAtStart = await helper.blogsInDb()
 				const blogToDelete = blogsAtStart[0]
 
 				await api.delete(`/api/blogs/${blogToDelete.id}`)
-					.expect(204)
+					.set('Authorization', `Bearer ${badToken}`)
+					.expect(401)
 
 				const blogsAtEnd = await helper.blogsInDb()
 
-				const titles = blogsAtEnd.map(r => r.title)
-				assert(!titles.includes(blogToDelete.title))
+				assert.strictEqual(blogsAtEnd.length, helper.blogs.length)
+			})
 
-				assert.strictEqual(blogsAtEnd.length, helper.blogs.length - 1)
+			test('fails with statuscode 401 if token is invalid', async () => {
+				const blogsAtStart = await helper.blogsInDb()
+				const blogToDelete = blogsAtStart[0]
+
+				await api.delete(`/api/blogs/${blogToDelete.id}`)
+					.set('Authorization', `Bearer 1234567890`)
+					.expect(401)
+
+				const blogsAtEnd = await helper.blogsInDb()
+
+				assert.strictEqual(blogsAtEnd.length, helper.blogs.length)
+			})
+
+			test('fails with statuscode 401 if token is missing', async () => {
+				const blogsAtStart = await helper.blogsInDb()
+				const blogToDelete = blogsAtStart[0]
+
+				await api.delete(`/api/blogs/${blogToDelete.id}`)
+					.expect(401)
+
+				const blogsAtEnd = await helper.blogsInDb()
+
+				assert.strictEqual(blogsAtEnd.length, helper.blogs.length)
 			})
 		})
 
