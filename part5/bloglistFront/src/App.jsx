@@ -2,6 +2,13 @@ import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import Notification from './components/Notification'
+
+// setMessage('Failed to fetch data from server')
+// setError(true)
+// setTimeout(() => {
+// 	setMessage(null)
+// }, 3000)
 
 const App = () => {
 	const [blogs, setBlogs] = useState([])
@@ -15,10 +22,21 @@ const App = () => {
 	const [newAuthor, setNewAuthor] = useState('')
 	const [newUrl, setNewUrl] = useState('')
 
+	const [message, setMessage] = useState(null)
+	const [error, setError] = useState(false)
+
 	useEffect(() => {
-		blogService.getAll().then(blogs =>
-			setBlogs(blogs)
-		)
+		try {
+			blogService.getAll().then(blogs =>
+				setBlogs(blogs)
+			)
+		} catch (exception) {
+			setMessage('Failed to fetch data from server')
+			setError(true)
+			setTimeout(() => {
+				setMessage(null)
+			}, 3000)
+		}
 	}, [])
 
 	useEffect(() => {
@@ -27,44 +45,92 @@ const App = () => {
 			const user = JSON.parse(loggedUserJSON)
 			setUser(user)
 			blogService.setToken(user.token)
+		} else {
+			setUser(null)
+			blogService.setToken(null)
 		}
 	}, [])
 
 	const handleLogin = async (event) => {
 		event.preventDefault()
 
-		const user = await loginService.login({
-			username, password,
-		})
+		try {
+			const user = await loginService.login({
+				username, password,
+			})
 
-		window.localStorage.setItem(
-			'loggedUser', JSON.stringify(user)
-		)
-		blogService.setToken(user.token)
+			window.localStorage.setItem(
+				'loggedUser', JSON.stringify(user)
+			)
+			blogService.setToken(user.token)
 
-		setUser(user)
+			setUser(user)
+
+			setMessage(`logged in successfully as ${user.name}`)
+			setError(false)
+			setTimeout(() => {
+				setMessage(null)
+			}, 3000)
+
+		} catch (exception) {
+			setMessage('wrong username or password')
+			setError(true)
+			setTimeout(() => {
+				setMessage(null)
+			}, 3000)
+		}
+
 		setUsername('')
 		setPassword('')
-		console.log(user)
 	}
 
 	const handleLogout = () => {
 		window.localStorage.removeItem('loggedUser')
 		setUser(null)
 		blogService.setToken(null)
+
+		setMessage('logged out successfully')
+		setError(false)
+		setTimeout(() => {
+			setMessage(null)
+		}, 3000)
 	}
 
 	const handleNewBlog = async (event) => {
 		event.preventDefault()
-		
+
 		const blogObject = {
 			title: newTitle,
 			author: newAuthor,
 			url: newUrl,
 		}
 
-		const returnedBlog = await blogService.create(blogObject)
-		setBlogs(blogs.concat(returnedBlog))
+		if(!newTitle || !newAuthor || !newUrl) {
+			setMessage('please fill all fields')
+			setError(true)
+			setTimeout(() => {
+				setMessage(null)
+			}, 3000)
+			return
+		}
+
+		try {
+			const returnedBlog = await blogService.create(blogObject)
+			setBlogs(blogs.concat(returnedBlog))
+
+			setMessage(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`)
+			setError(false)
+			setTimeout(() => {
+				setMessage(null)
+			}, 3000)
+		} catch (exception) {
+			setMessage('failed to create new blog')
+			setError(true)
+			setTimeout(() => {
+				setMessage(null)
+			}, 3000)
+		}
+
 		setNewTitle('')
 		setNewAuthor('')
 		setNewUrl('')
@@ -73,6 +139,7 @@ const App = () => {
 	const loginForm = () => (
 		<div>
 			<h2>log in to application</h2>
+			<Notification message={message} error={error} />
 			<form onSubmit={handleLogin}>
 				<div>
 					username
@@ -100,8 +167,10 @@ const App = () => {
 	const blogsApp = () => (
 		<div>
 			<h2>blogs</h2>
+			<Notification message={message} error={error} />
 			<p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
 
+			<h2>create new</h2>
 			<form onSubmit={handleNewBlog}>
 				<div>
 					title
