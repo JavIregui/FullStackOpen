@@ -25,17 +25,17 @@ const App = () => {
 		<>
 			{user === null ?
 				<Login
-					setUser={setUser}
-					setMessage={setMessage}
-					setError={setError}
 					message={message}
+					setMessage={setMessage}
 					error={error}
+					setError={setError}
+					setUser={setUser}
 				/> :
 				<BlogList
-					setMessage={setMessage}
-					setError={setError}
 					message={message}
+					setMessage={setMessage}
 					error={error}
+					setError={setError}
 					user={user}
 					setUser={setUser}
 				/>

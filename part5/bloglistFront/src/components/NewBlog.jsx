@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import blogService from '../services/blogs'
 
-const NewBlog = ({ blogs, setBlogs, setMessage, setError }) => {
+const NewBlog = ({ blogs, setBlogs, setMessage, setError, toggleRef }) => {
 
     const [newTitle, setNewTitle] = useState('')
     const [newAuthor, setNewAuthor] = useState('')
@@ -10,13 +10,7 @@ const NewBlog = ({ blogs, setBlogs, setMessage, setError }) => {
     const handleNewBlog = async (event) => {
 		event.preventDefault()
 
-		const blogObject = {
-			title: newTitle,
-			author: newAuthor,
-			url: newUrl,
-		}
-
-		if (!newTitle || !newAuthor || !newUrl) {
+        if (!newTitle || !newAuthor || !newUrl) {
 			setMessage('please fill all fields')
 			setError(true)
 			setTimeout(() => {
@@ -25,9 +19,17 @@ const NewBlog = ({ blogs, setBlogs, setMessage, setError }) => {
 			return
 		}
 
+		const blogObject = {
+			title: newTitle,
+			author: newAuthor,
+			url: newUrl,
+		}
+
 		try {
 			const returnedBlog = await blogService.create(blogObject)
 			setBlogs(blogs.concat(returnedBlog))
+
+            toggleRef.current.toggleVisibility()
 
 			setMessage(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`)
 			setError(false)

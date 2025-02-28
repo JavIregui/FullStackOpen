@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import blogService from '../services/blogs'
 import Blog from './Blog'
 import Notification from './Notification'
@@ -9,6 +9,8 @@ import Togglable from './Togglable'
 const BlogList = ({ message, setMessage, error, setError, user, setUser }) => {
 
     const [blogs, setBlogs] = useState([])
+
+    const newBlogRef = useRef()
 
     useEffect(() => {
         try {
@@ -43,12 +45,13 @@ const BlogList = ({ message, setMessage, error, setError, user, setUser }) => {
 
             <p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
 
-            <Togglable buttonLabel="new blog">
+            <Togglable buttonLabel="create new blog" ref={newBlogRef}>
                 <NewBlog
                     blogs={blogs}
                     setBlogs={setBlogs}
                     setMessage={setMessage}
                     setError={setError}
+                    toggleRef={newBlogRef}
                 />
             </Togglable>
 
