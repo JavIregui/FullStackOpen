@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
+import blogService from '../services/blogs'
 
 const Blog = ({ blog }) => {
 
 	const [showDetails, setShowDetails] = useState(false)
+	const [likes, setLikes] = useState(blog.likes)
 
 	const blogStyle = {
 		paddingTop: 10,
@@ -14,6 +16,15 @@ const Blog = ({ blog }) => {
 
 	const toggleDetails = () => {
 		setShowDetails(!showDetails)
+	}
+	
+	const addLike = () => {
+		const newLikes = likes + 1
+
+		blogService.update(blog.id, {
+			likes: newLikes
+		})
+		setLikes(newLikes)
 	}
 
 	return (
@@ -28,8 +39,8 @@ const Blog = ({ blog }) => {
 				<div>
 					<a href={`https://${blog.url}`}>{blog.url}</a>
 					<div>
-						{blog.likes} likes
-						<button>like</button>
+						{likes} likes
+						<button onClick={addLike}>like</button>
 					</div>
 					<div>{blog.user.name}</div>
 				</div>
