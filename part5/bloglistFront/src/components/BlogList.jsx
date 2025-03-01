@@ -59,7 +59,7 @@ const BlogList = ({ message, setMessage, error, setError, user, setUser }) => {
             {blogs && blogs.length > 0 ?
                 (
                     blogs.map(blog =>
-                        <Blog key={blog.id} blog={blog} setBlogs={setBlogs} />
+                        <Blog key={blog.id} blog={blog} setBlogs={setBlogs} user={user} />
                     )
                 ) :
                 (
