@@ -27,17 +27,17 @@ const Blog = ({ blog, setBlogs, user }) => {
 				b.id === returnedBlog.id
 					? { ...b, ...returnedBlog }
 					: b
-			);
-			return updatedBlogs.sort((a, b) => b.likes - a.likes);
+			)
+			return updatedBlogs.sort((a, b) => b.likes - a.likes)
 		})
 	}
 
 	const deleteBlog = async () => {
-        if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
-            await blogService.remove(blog.id)
-            setBlogs(prevBlogs => prevBlogs.filter(b => b.id !== blog.id))
-        }
-    }
+		if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
+			await blogService.remove(blog.id)
+			setBlogs(prevBlogs => prevBlogs.filter(b => b.id !== blog.id))
+		}
+	}
 
 	return (
 		<div style={blogStyle}>
@@ -56,8 +56,8 @@ const Blog = ({ blog, setBlogs, user }) => {
 					</div>
 					<div>{blog.user.name}</div>
 					{user.username === blog.user.username && (
-                        <button onClick={deleteBlog}>remove</button>
-                    )}
+						<button onClick={deleteBlog}>remove</button>
+					)}
 				</div>
 			}
 		</div>

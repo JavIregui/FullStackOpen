@@ -3,90 +3,90 @@ import blogService from '../services/blogs'
 
 const NewBlog = ({ blogs, setBlogs, setMessage, setError, toggleRef }) => {
 
-    const [newTitle, setNewTitle] = useState('')
-    const [newAuthor, setNewAuthor] = useState('')
-    const [newUrl, setNewUrl] = useState('')
+	const [newTitle, setNewTitle] = useState('')
+	const [newAuthor, setNewAuthor] = useState('')
+	const [newUrl, setNewUrl] = useState('')
 
-    const handleNewBlog = async (event) => {
-        event.preventDefault()
+	const handleNewBlog = async (event) => {
+		event.preventDefault()
 
-        if (!newTitle || !newAuthor || !newUrl) {
-            setMessage('please fill all fields')
-            setError(true)
-            setTimeout(() => {
-                setMessage(null)
-            }, 3000)
-            return
-        }
+		if (!newTitle || !newAuthor || !newUrl) {
+			setMessage('please fill all fields')
+			setError(true)
+			setTimeout(() => {
+				setMessage(null)
+			}, 3000)
+			return
+		}
 
-        const blogObject = {
-            title: newTitle,
-            author: newAuthor,
-            url: newUrl,
-        }
+		const blogObject = {
+			title: newTitle,
+			author: newAuthor,
+			url: newUrl,
+		}
 
-        try {
-            const returnedBlog = await blogService.create(blogObject)
-            setBlogs(prevBlogs => {
-                const newBlogs = [...prevBlogs, returnedBlog];
-                return newBlogs.sort((a, b) => b.likes - a.likes);
-            })
+		try {
+			const returnedBlog = await blogService.create(blogObject)
+			setBlogs(prevBlogs => {
+				const newBlogs = [...prevBlogs, returnedBlog]
+				return newBlogs.sort((a, b) => b.likes - a.likes)
+			})
 
-            toggleRef.current.toggleVisibility()
+			toggleRef.current.toggleVisibility()
 
-            setMessage(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`)
-            setError(false)
-            setTimeout(() => {
-                setMessage(null)
-            }, 3000)
-        } catch (exception) {
-            setMessage('failed to create new blog')
-            setError(true)
-            setTimeout(() => {
-                setMessage(null)
-            }, 3000)
-        }
+			setMessage(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`)
+			setError(false)
+			setTimeout(() => {
+				setMessage(null)
+			}, 3000)
+		} catch (exception) {
+			setMessage('failed to create new blog')
+			setError(true)
+			setTimeout(() => {
+				setMessage(null)
+			}, 3000)
+		}
 
-        setNewTitle('')
-        setNewAuthor('')
-        setNewUrl('')
-    }
+		setNewTitle('')
+		setNewAuthor('')
+		setNewUrl('')
+	}
 
-    return (
-        <>
-            <h2>create new</h2>
-            <form onSubmit={handleNewBlog}>
-                <div>
+	return (
+		<>
+			<h2>create new</h2>
+			<form onSubmit={handleNewBlog}>
+				<div>
                     title
-                    <input
-                        type="text"
-                        value={newTitle}
-                        name="Title"
-                        onChange={({ target }) => setNewTitle(target.value)}
-                    />
-                </div>
-                <div>
+					<input
+						type="text"
+						value={newTitle}
+						name="Title"
+						onChange={({ target }) => setNewTitle(target.value)}
+					/>
+				</div>
+				<div>
                     author
-                    <input
-                        type="text"
-                        value={newAuthor}
-                        name="Author"
-                        onChange={({ target }) => setNewAuthor(target.value)}
-                    />
-                </div>
-                <div>
+					<input
+						type="text"
+						value={newAuthor}
+						name="Author"
+						onChange={({ target }) => setNewAuthor(target.value)}
+					/>
+				</div>
+				<div>
                     url
-                    <input
-                        type="text"
-                        value={newUrl}
-                        name="Url"
-                        onChange={({ target }) => setNewUrl(target.value)}
-                    />
-                </div>
-                <button type="submit">create</button>
-            </form>
-        </>
-    )
+					<input
+						type="text"
+						value={newUrl}
+						name="Url"
+						onChange={({ target }) => setNewUrl(target.value)}
+					/>
+				</div>
+				<button type="submit">create</button>
+			</form>
+		</>
+	)
 }
 
 export default NewBlog

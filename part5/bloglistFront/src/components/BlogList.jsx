@@ -8,65 +8,65 @@ import Togglable from './Togglable'
 
 const BlogList = ({ message, setMessage, error, setError, user, setUser }) => {
 
-    const [blogs, setBlogs] = useState([])
+	const [blogs, setBlogs] = useState([])
 
-    const newBlogRef = useRef()
+	const newBlogRef = useRef()
 
-    useEffect(() => {
-        try {
-            blogService.getAll().then(list => {
-                const sortedList = list.sort((a, b) => b.likes - a.likes);
-                setBlogs(sortedList)
-            })
-        } catch (exception) {
-            setMessage('Failed to fetch data from server')
-            setError(true)
-            setTimeout(() => {
-                setMessage(null)
-            }, 3000)
-        }
-    }, [])
+	useEffect(() => {
+		try {
+			blogService.getAll().then(list => {
+				const sortedList = list.sort((a, b) => b.likes - a.likes)
+				setBlogs(sortedList)
+			})
+		} catch (exception) {
+			setMessage('Failed to fetch data from server')
+			setError(true)
+			setTimeout(() => {
+				setMessage(null)
+			}, 3000)
+		}
+	}, [])
 
-    const handleLogout = () => {
-        window.localStorage.removeItem('loggedUser')
-        setUser(null)
-        blogService.setToken(null)
+	const handleLogout = () => {
+		window.localStorage.removeItem('loggedUser')
+		setUser(null)
+		blogService.setToken(null)
 
-        setMessage('logged out successfully')
-        setError(false)
-        setTimeout(() => {
-            setMessage(null)
-        }, 3000)
-    }
+		setMessage('logged out successfully')
+		setError(false)
+		setTimeout(() => {
+			setMessage(null)
+		}, 3000)
+	}
 
-    return (
-        <div>
-            <h2>blogs</h2>
-            <Notification message={message} error={error} />
+	return (
+		<div>
+			<h2>blogs</h2>
+			<Notification message={message} error={error} />
 
-            <p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
+			<p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
 
-            <Togglable buttonLabel="create new blog" ref={newBlogRef}>
-                <NewBlog
-                    blogs={blogs}
-                    setBlogs={setBlogs}
-                    setMessage={setMessage}
-                    setError={setError}
-                    toggleRef={newBlogRef}
-                />
-            </Togglable>
+			<Togglable buttonLabel="create new blog" ref={newBlogRef}>
+				<NewBlog
+					blogs={blogs}
+					setBlogs={setBlogs}
+					setMessage={setMessage}
+					setError={setError}
+					toggleRef={newBlogRef}
+				/>
+			</Togglable>
 
-            {blogs && blogs.length > 0 ?
-                (
-                    blogs.map(blog =>
-                        <Blog key={blog.id} blog={blog} setBlogs={setBlogs} user={user} />
-                    )
-                ) :
-                (
-                    <p>No blogs available</p>
-                )}
-        </div>
-    )
+			{blogs && blogs.length > 0 ?
+				(
+					blogs.map(blog =>
+						<Blog key={blog.id} blog={blog} setBlogs={setBlogs} user={user} />
+					)
+				) :
+				(
+					<p>No blogs available</p>
+				)}
+		</div>
+	)
 }
 
 export default BlogList
