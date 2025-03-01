@@ -8,46 +8,49 @@ const NewBlog = ({ blogs, setBlogs, setMessage, setError, toggleRef }) => {
     const [newUrl, setNewUrl] = useState('')
 
     const handleNewBlog = async (event) => {
-		event.preventDefault()
+        event.preventDefault()
 
         if (!newTitle || !newAuthor || !newUrl) {
-			setMessage('please fill all fields')
-			setError(true)
-			setTimeout(() => {
-				setMessage(null)
-			}, 3000)
-			return
-		}
+            setMessage('please fill all fields')
+            setError(true)
+            setTimeout(() => {
+                setMessage(null)
+            }, 3000)
+            return
+        }
 
-		const blogObject = {
-			title: newTitle,
-			author: newAuthor,
-			url: newUrl,
-		}
+        const blogObject = {
+            title: newTitle,
+            author: newAuthor,
+            url: newUrl,
+        }
 
-		try {
-			const returnedBlog = await blogService.create(blogObject)
-			setBlogs(blogs.concat(returnedBlog))
+        try {
+            const returnedBlog = await blogService.create(blogObject)
+            setBlogs(prevBlogs => {
+                const newBlogs = [...prevBlogs, returnedBlog];
+                return newBlogs.sort((a, b) => b.likes - a.likes);
+            })
 
             toggleRef.current.toggleVisibility()
 
-			setMessage(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`)
-			setError(false)
-			setTimeout(() => {
-				setMessage(null)
-			}, 3000)
-		} catch (exception) {
-			setMessage('failed to create new blog')
-			setError(true)
-			setTimeout(() => {
-				setMessage(null)
-			}, 3000)
-		}
+            setMessage(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`)
+            setError(false)
+            setTimeout(() => {
+                setMessage(null)
+            }, 3000)
+        } catch (exception) {
+            setMessage('failed to create new blog')
+            setError(true)
+            setTimeout(() => {
+                setMessage(null)
+            }, 3000)
+        }
 
-		setNewTitle('')
-		setNewAuthor('')
-		setNewUrl('')
-	}
+        setNewTitle('')
+        setNewAuthor('')
+        setNewUrl('')
+    }
 
     return (
         <>

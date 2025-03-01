@@ -14,9 +14,10 @@ const BlogList = ({ message, setMessage, error, setError, user, setUser }) => {
 
     useEffect(() => {
         try {
-            blogService.getAll().then(list =>
-                setBlogs(list)
-            )
+            blogService.getAll().then(list => {
+                const sortedList = list.sort((a, b) => b.likes - a.likes);
+                setBlogs(sortedList)
+            })
         } catch (exception) {
             setMessage('Failed to fetch data from server')
             setError(true)
@@ -27,16 +28,16 @@ const BlogList = ({ message, setMessage, error, setError, user, setUser }) => {
     }, [])
 
     const handleLogout = () => {
-		window.localStorage.removeItem('loggedUser')
-		setUser(null)
-		blogService.setToken(null)
+        window.localStorage.removeItem('loggedUser')
+        setUser(null)
+        blogService.setToken(null)
 
-		setMessage('logged out successfully')
-		setError(false)
-		setTimeout(() => {
-			setMessage(null)
-		}, 3000)
-	}
+        setMessage('logged out successfully')
+        setError(false)
+        setTimeout(() => {
+            setMessage(null)
+        }, 3000)
+    }
 
     return (
         <div>
@@ -58,7 +59,7 @@ const BlogList = ({ message, setMessage, error, setError, user, setUser }) => {
             {blogs && blogs.length > 0 ?
                 (
                     blogs.map(blog =>
-                        <Blog key={blog.id} blog={blog} />
+                        <Blog key={blog.id} blog={blog} setBlogs={setBlogs} />
                     )
                 ) :
                 (
