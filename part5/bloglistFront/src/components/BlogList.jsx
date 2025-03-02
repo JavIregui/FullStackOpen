@@ -48,7 +48,6 @@ const BlogList = ({ message, setMessage, error, setError, user, setUser }) => {
 
 			<Togglable buttonLabel="create new blog" ref={newBlogRef}>
 				<NewBlog
-					blogs={blogs}
 					setBlogs={setBlogs}
 					setMessage={setMessage}
 					setError={setError}

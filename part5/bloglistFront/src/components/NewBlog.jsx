@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import blogService from '../services/blogs'
 
-const NewBlog = ({ blogs, setBlogs, setMessage, setError, toggleRef }) => {
+const NewBlog = ({ setBlogs, setMessage, setError, toggleRef }) => {
 
 	const [newTitle, setNewTitle] = useState('')
 	const [newAuthor, setNewAuthor] = useState('')
@@ -26,7 +26,7 @@ const NewBlog = ({ blogs, setBlogs, setMessage, setError, toggleRef }) => {
 		}
 
 		try {
-			const returnedBlog = await blogService.create(blogObject)
+			const returnedBlog = await blogService.create(blogObject) 
 			setBlogs(prevBlogs => {
 				const newBlogs = [...prevBlogs, returnedBlog]
 				return newBlogs.sort((a, b) => b.likes - a.likes)
@@ -63,6 +63,7 @@ const NewBlog = ({ blogs, setBlogs, setMessage, setError, toggleRef }) => {
 						value={newTitle}
 						name="Title"
 						onChange={({ target }) => setNewTitle(target.value)}
+						placeholder='blog title...'
 					/>
 				</div>
 				<div>
@@ -72,6 +73,7 @@ const NewBlog = ({ blogs, setBlogs, setMessage, setError, toggleRef }) => {
 						value={newAuthor}
 						name="Author"
 						onChange={({ target }) => setNewAuthor(target.value)}
+						placeholder='by...'
 					/>
 				</div>
 				<div>
@@ -81,6 +83,7 @@ const NewBlog = ({ blogs, setBlogs, setMessage, setError, toggleRef }) => {
 						value={newUrl}
 						name="Url"
 						onChange={({ target }) => setNewUrl(target.value)}
+						placeholder='found at...'
 					/>
 				</div>
 				<button type="submit">create</button>

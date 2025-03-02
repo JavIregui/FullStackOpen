@@ -1,3 +1,5 @@
+const vitestGlobals = require('eslint-plugin-vitest-globals')
+
 module.exports = [
 	{
 		languageOptions: {
@@ -6,6 +8,7 @@ module.exports = [
 			globals: {
 				browser: true,
 				es2020: true,
+				'vitest-globals/env': true,
 			},
 		},
 		ignores: ['dist', '.eslintrc.cjs'],
@@ -13,6 +16,7 @@ module.exports = [
 			react: require('eslint-plugin-react'),
 			'react-hooks': require('eslint-plugin-react-hooks'),
 			'react-refresh': require('eslint-plugin-react-refresh'),
+			'vitest-globals': vitestGlobals,
 		},
 		rules: {
 			'indent': ['error', 'tab'],
@@ -27,6 +31,7 @@ module.exports = [
 			'react/react-in-jsx-scope': 'off',
 			'react/prop-types': 0,
 			'no-unused-vars': 0,
+			...vitestGlobals.configs.recommended.rules,
 		},
 	},
 	{
