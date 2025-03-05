@@ -9,6 +9,9 @@ const App = () => {
       type: 'VOTE',
       data: { id }
     })
+    dispatch({
+      type: 'SORT'
+    })
   }
 
   const addAnecdote = (event) => {
@@ -18,6 +21,9 @@ const App = () => {
     dispatch({
       type: 'NEW_ANECDOTE',
       data: { content }
+    })
+    dispatch({
+      type: 'SORT'
     })
   }
 

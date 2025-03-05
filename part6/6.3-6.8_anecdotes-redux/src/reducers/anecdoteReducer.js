@@ -33,6 +33,9 @@ const reducer = (state = initialState, action) => {
     case 'NEW_ANECDOTE':
       return [...state, asObject(action.data.content)]
 
+    case 'SORT':
+      return state.sort((a, b) => b.votes - a.votes)
+
     default:
       return state
   }
