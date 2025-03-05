@@ -1,5 +1,6 @@
 import { useDispatch } from 'react-redux'
 import { createAnecdote, sortAnecdotes } from '../reducers/anecdoteReducer'
+import {showNotification} from '../reducers/notificationReducer'
 
 const AnecdoteForm = () => {
     const dispatch = useDispatch()
@@ -11,6 +12,7 @@ const AnecdoteForm = () => {
 
         dispatch(createAnecdote(content))
         dispatch(sortAnecdotes())
+        dispatch(showNotification(`You created a new anecdote`, 5))
     }
 
     return (
