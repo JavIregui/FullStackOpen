@@ -4,7 +4,11 @@ import { getAnecdotes, voteAnecdote } from './requests'
 import AnecdoteForm from './components/AnecdoteForm'
 import Notification from './components/Notification'
 
+import { useNotificationDispatch } from './notificationState'
+
 const App = () => {
+
+  const dispatch = useNotificationDispatch()
 
   const queryClient = useQueryClient()
 
@@ -37,10 +41,12 @@ const App = () => {
       ...anecdote,
       votes: anecdote.votes + 1
     })
+
+    dispatch({type: 'VOTE', payload: anecdote.content})
   }
 
   return (
-    <div>
+    <>
       <h3>Anecdote app</h3>
     
       <Notification />
@@ -57,7 +63,7 @@ const App = () => {
           </div>
         </div>
       )}
-    </div>
+    </>
   )
 }
 
