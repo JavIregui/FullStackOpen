@@ -47,6 +47,12 @@ const BlogInfo = () => {
 						<button onClick={addLike}>like</button>
 					</div>
 					<div>added by {selectedBlog.user.name}</div>
+					<h3>comments</h3>
+					<ul>
+						{selectedBlog.comments.map((comment) => (
+							<li key={comment}>{comment}</li>
+						))}
+					</ul>
 					{user.username === selectedBlog.user.username && <button onClick={deleteBlog}>remove</button>}
 				</div>
 			) : (
