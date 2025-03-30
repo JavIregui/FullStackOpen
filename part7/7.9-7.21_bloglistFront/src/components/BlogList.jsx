@@ -8,6 +8,26 @@ import { useDispatch, useSelector } from "react-redux"
 import { showError } from "../reducers/notificationReducer"
 import { initializeBlogs } from "../reducers/blogReducer"
 
+import styled from "styled-components"
+
+const BlogListContainer = styled.div`
+	padding: 20px 40px;
+	background-color: darkgray;
+`
+const Title = styled.h2`
+	font-family: "Verdana", sans-serif;
+	text-transform: uppercase;
+	color: white;
+	font-size: 24px;
+	margin-bottom: 20px;
+`
+const Paragraph = styled.p`
+	font-family: "Verdana", sans-serif;
+	text-transform: uppercase;
+	color: white;
+	font-size: 14px;
+`
+
 const BlogList = () => {
 	const blogs = useSelector((state) => state.blogs)
 	const dispatch = useDispatch()
@@ -23,8 +43,8 @@ const BlogList = () => {
 	}, [])
 
 	return (
-		<div>
-			<h2>blogs</h2>
+		<BlogListContainer>
+			<Title>blogs App</Title>
 
 			<Notification />
 
@@ -43,9 +63,9 @@ const BlogList = () => {
 					/>
 				))
 			) : (
-				<p>No blogs available</p>
+				<Paragraph>No blogs available</Paragraph>
 			)}
-		</div>
+		</BlogListContainer>
 	)
 }
 

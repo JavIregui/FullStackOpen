@@ -4,6 +4,54 @@ import { useDispatch } from "react-redux"
 import { showNotification, showError } from "../reducers/notificationReducer"
 import { createBlog } from "../reducers/blogReducer"
 
+import styled from "styled-components"
+
+const Title = styled.h2`
+	color: white;
+	font-size: 18px;
+	text-transform: uppercase;
+	font-family: "Verdana", sans-serif;
+	margin-bottom: 1rem;
+`
+const CreateButton = styled.button`
+	border: none;
+	color: white;
+	padding: 10px 20px;
+	font-size: 14px;
+	font-weight: bold;
+	text-transform: uppercase;
+	cursor: pointer;
+	margin-top: 20px;
+	margin-bottom: 10px;
+	background-color: #4caf50;
+	&:hover {
+		background-color: #45a049;
+	}
+`
+const InputContainer = styled.div`
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 10px;
+	gap: 5px;
+	font-size: 14px;
+	font-family: "Verdana", sans-serif;
+	color: lightgray;
+	text-transform: uppercase;
+`
+const Input = styled.input`
+	padding: 10px;
+	border: none;
+	background-color: white;
+	font-size: 14px;
+	font-family: "Verdana", sans-serif;
+	color: lightgray;
+	&:focus {
+		outline: none;
+		border: 2px solid #4caf50;
+		background-color: white;
+	}
+`
+
 const NewBlog = ({ toggleRef }) => {
 	const dispatch = useDispatch()
 
@@ -43,39 +91,39 @@ const NewBlog = ({ toggleRef }) => {
 
 	return (
 		<>
-			<h2>create new</h2>
+			<Title>create new</Title>
 			<form onSubmit={handleNewBlog}>
-				<div>
+				<InputContainer>
 					title
-					<input
+					<Input
 						type='text'
 						value={newTitle}
 						name='Title'
 						onChange={({ target }) => setNewTitle(target.value)}
 						placeholder='blog title...'
 					/>
-				</div>
-				<div>
+				</InputContainer>
+				<InputContainer>
 					author
-					<input
+					<Input
 						type='text'
 						value={newAuthor}
 						name='Author'
 						onChange={({ target }) => setNewAuthor(target.value)}
 						placeholder='by...'
 					/>
-				</div>
-				<div>
+				</InputContainer>
+				<InputContainer>
 					url
-					<input
+					<Input
 						type='text'
 						value={newUrl}
 						name='Url'
 						onChange={({ target }) => setNewUrl(target.value)}
 						placeholder='found at...'
 					/>
-				</div>
-				<button type='submit'>create</button>
+				</InputContainer>
+				<CreateButton type='submit'>create</CreateButton>
 			</form>
 		</>
 	)

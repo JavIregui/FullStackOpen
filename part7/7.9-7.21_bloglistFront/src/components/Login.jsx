@@ -5,6 +5,60 @@ import { useDispatch } from "react-redux"
 import { showNotification, showError } from "../reducers/notificationReducer"
 import { loginUser } from "../reducers/userReducer"
 
+import styled from "styled-components"
+
+const Container = styled.div`
+	padding: 10px;
+	padding-left: 25px;
+	margin-bottom: 5px;
+	background-color: darkgray;
+`
+const Title = styled.h2`
+	font-family: "Verdana", sans-serif;
+	text-transform: uppercase;
+	color: white;
+	font-size: 24px;
+	margin-bottom: 20px;
+`
+const InputContainer = styled.div`
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 10px;
+	gap: 5px;
+	font-size: 14px;
+	font-family: "Verdana", sans-serif;
+	color: lightgray;
+	text-transform: uppercase;
+`
+const Input = styled.input`
+	padding: 10px;
+	border: none;
+	background-color: white;
+	font-size: 14px;
+	font-family: "Verdana", sans-serif;
+	color: lightgray;
+	&:focus {
+		outline: none;
+		border: 2px solid #4caf50;
+		background-color: white;
+	}
+`
+const Button = styled.button`
+	border: none;
+	color: white;
+	padding: 10px 20px;
+	font-size: 14px;
+	font-weight: bold;
+	text-transform: uppercase;
+	cursor: pointer;
+	margin-top: 20px;
+	margin-bottom: 10px;
+	background-color: #4caf50;
+	&:hover {
+		background-color: #45a049;
+	}
+`
+
 const Login = () => {
 	const dispatch = useDispatch()
 
@@ -27,33 +81,33 @@ const Login = () => {
 	}
 
 	return (
-		<div>
-			<h2>log in to application</h2>
+		<Container>
+			<Title>log in to application</Title>
 
 			<Notification />
 
 			<form onSubmit={handleLogin}>
-				<div>
+				<InputContainer>
 					username
-					<input
+					<Input
 						type='text'
 						value={username}
 						name='Username'
 						onChange={({ target }) => setUsername(target.value)}
 					/>
-				</div>
-				<div>
+				</InputContainer>
+				<InputContainer>
 					password
-					<input
+					<Input
 						type='password'
 						value={password}
 						name='Password'
 						onChange={({ target }) => setPassword(target.value)}
 					/>
-				</div>
-				<button type='submit'>login</button>
+				</InputContainer>
+				<Button type='submit'>login</Button>
 			</form>
-		</div>
+		</Container>
 	)
 }
 
