@@ -5,13 +5,11 @@ import NewBlog from "./NewBlog"
 import Togglable from "./Togglable"
 
 import { useDispatch, useSelector } from "react-redux"
-import { showNotification, showError } from "../reducers/notificationReducer"
+import { showError } from "../reducers/notificationReducer"
 import { initializeBlogs } from "../reducers/blogReducer"
-import { logoutUser } from "../reducers/userReducer"
 
 const BlogList = () => {
 	const blogs = useSelector((state) => state.blogs)
-	const user = useSelector((state) => state.user)
 	const dispatch = useDispatch()
 
 	const newBlogRef = useRef()
@@ -24,21 +22,11 @@ const BlogList = () => {
 		}
 	}, [])
 
-	const handleLogout = () => {
-		dispatch(logoutUser())
-
-		dispatch(showNotification("logged out successfully", 3))
-	}
-
 	return (
 		<div>
 			<h2>blogs</h2>
 
 			<Notification />
-
-			<p>
-				{user.name} logged in <button onClick={handleLogout}>logout</button>
-			</p>
 
 			<Togglable
 				buttonLabel='create new blog'
@@ -52,7 +40,6 @@ const BlogList = () => {
 					<Blog
 						key={blog.id}
 						blog={blog}
-						user={user}
 					/>
 				))
 			) : (

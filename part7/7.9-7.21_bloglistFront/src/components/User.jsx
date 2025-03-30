@@ -1,14 +1,10 @@
 import React, { useEffect } from "react"
 import { useMatch } from "react-router-dom"
 import { useSelector, useDispatch } from "react-redux"
-import { showNotification } from "../reducers/notificationReducer"
-import { logoutUser } from "../reducers/userReducer"
 import { initializeUsers } from "../reducers/usersReducer"
 
 const User = () => {
 	const dispatch = useDispatch()
-
-	const user = useSelector((state) => state.user)
 
 	const users = useSelector((state) => state.users)
 	useEffect(() => {
@@ -22,18 +18,9 @@ const User = () => {
 
 	const selectedUser = users.find((user) => user.id === selectedUserId)
 
-	const handleLogout = () => {
-		dispatch(logoutUser())
-		dispatch(showNotification("logged out successfully", 3))
-	}
-
 	return (
 		<div>
 			<h2>blogs</h2>
-
-			<p>
-				{user.name} logged in <button onClick={handleLogout}>logout</button>
-			</p>
 
 			{selectedUser ? (
 				<div>

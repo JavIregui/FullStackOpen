@@ -1,12 +1,10 @@
 import React, { useEffect } from "react"
 import { useSelector, useDispatch } from "react-redux"
-import { showNotification, showError } from "../reducers/notificationReducer"
-import { logoutUser } from "../reducers/userReducer"
+import { showError } from "../reducers/notificationReducer"
 import { initializeUsers } from "../reducers/usersReducer"
 import { Link } from "react-router-dom"
 
 const Users = () => {
-	const user = useSelector((state) => state.user)
 	const users = useSelector((state) => state.users)
 	const dispatch = useDispatch()
 
@@ -18,18 +16,9 @@ const Users = () => {
 		}
 	}, [])
 
-	const handleLogout = () => {
-		dispatch(logoutUser())
-		dispatch(showNotification("logged out successfully", 3))
-	}
-
 	return (
 		<div>
 			<h2>blogs</h2>
-
-			<p>
-				{user.name} logged in <button onClick={handleLogout}>logout</button>
-			</p>
 
 			<h2>Users</h2>
 
