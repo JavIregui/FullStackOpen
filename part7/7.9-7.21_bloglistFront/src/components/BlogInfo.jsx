@@ -1,9 +1,10 @@
-import React, { useEffect } from "react"
+import React, { useState, useEffect } from "react"
 import { useMatch, useNavigate } from "react-router-dom"
 import { useSelector, useDispatch } from "react-redux"
-import { remove, like, initializeBlogs } from "../reducers/blogReducer"
+import { remove, like, initializeBlogs, addComment } from "../reducers/blogReducer"
 
 const BlogInfo = () => {
+	const [comment, setComment] = useState("")
 	const blogs = useSelector((state) => state.blogs)
 	useEffect(() => {
 		if (blogs.length === 0) {
@@ -32,6 +33,12 @@ const BlogInfo = () => {
 		}
 	}
 
+	const handleComment = async (event) => {
+		event.preventDefault()
+		dispatch(addComment(selectedBlog.id, comment))
+		setComment("")
+	}
+
 	return (
 		<div>
 			<h2>blogs</h2>
@@ -48,6 +55,15 @@ const BlogInfo = () => {
 					</div>
 					<div>added by {selectedBlog.user.name}</div>
 					<h3>comments</h3>
+					<form onSubmit={handleComment}>
+						<input
+							type='text'
+							value={comment}
+							onChange={(e) => setComment(e.target.value)}
+							placeholder='Add a comment'
+						/>
+						<button type='submit'>add comment</button>
+					</form>
 					<ul>
 						{selectedBlog.comments.map((comment) => (
 							<li key={comment}>{comment}</li>
