@@ -1,14 +1,12 @@
 import { useState } from "react"
 import Notification from "./Notification"
 
-import { useDispatch, useSelector } from "react-redux"
+import { useDispatch } from "react-redux"
 import { showNotification, showError } from "../reducers/notificationReducer"
 import { loginUser } from "../reducers/userReducer"
 
 const Login = () => {
 	const dispatch = useDispatch()
-
-	const user = useSelector((state) => state.user)
 
 	const [username, setUsername] = useState("")
 	const [password, setPassword] = useState("")
