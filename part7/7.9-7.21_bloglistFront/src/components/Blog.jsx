@@ -1,8 +1,12 @@
-import React, { useState } from "react";
-import blogService from "../services/blogs";
+import React, { useState } from "react"
 
-const Blog = ({ blog, setBlogs, user }) => {
-	const [showDetails, setShowDetails] = useState(false);
+import { useDispatch } from "react-redux"
+import { remove, like } from "../reducers/blogReducer"
+
+const Blog = ({ blog, user }) => {
+	const dispatch = useDispatch()
+
+	const [showDetails, setShowDetails] = useState(false)
 
 	const blogStyle = {
 		paddingTop: 10,
@@ -10,39 +14,27 @@ const Blog = ({ blog, setBlogs, user }) => {
 		border: "solid",
 		borderWidth: 1,
 		marginBottom: 5,
-	};
+	}
 
 	const toggleDetails = () => {
-		setShowDetails(!showDetails);
-	};
+		setShowDetails(!showDetails)
+	}
 
 	const addLike = async () => {
-		const returnedBlog = await blogService.update(blog.id, {
-			likes: blog.likes + 1,
-		});
-
-		setBlogs((prevBlogs) => {
-			const updatedBlogs = prevBlogs.map((b) =>
-				b.id === returnedBlog.id ? { ...b, ...returnedBlog } : b
-			);
-			return updatedBlogs.sort((a, b) => b.likes - a.likes);
-		});
-	};
+		dispatch(like(blog.id, { likes: blog.likes + 1 }))
+	}
 
 	const deleteBlog = async () => {
 		if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
-			await blogService.remove(blog.id);
-			setBlogs((prevBlogs) => prevBlogs.filter((b) => b.id !== blog.id));
+			dispatch(remove(blog.id))
 		}
-	};
+	}
 
 	return (
 		<div style={blogStyle}>
 			<div>
 				{blog.title} {blog.author}
-				<button onClick={toggleDetails}>
-					{showDetails ? "hide" : "view"}
-				</button>
+				<button onClick={toggleDetails}>{showDetails ? "hide" : "view"}</button>
 			</div>
 
 			{showDetails && (
@@ -53,13 +45,11 @@ const Blog = ({ blog, setBlogs, user }) => {
 						<button onClick={addLike}>like</button>
 					</div>
 					<div>{blog.user.name}</div>
-					{user.username === blog.user.username && (
-						<button onClick={deleteBlog}>remove</button>
-					)}
+					{user.username === blog.user.username && <button onClick={deleteBlog}>remove</button>}
 				</div>
 			)}
 		</div>
-	);
-};
+	)
+}
 
-export default Blog;
+export default Blog

@@ -1,10 +1,10 @@
 import { useState } from "react"
-import blogService from "../services/blogs"
 
 import { useDispatch } from "react-redux"
 import { showNotification, showError } from "../reducers/notificationReducer"
+import { createBlog } from "../reducers/blogReducer"
 
-const NewBlog = ({ setBlogs, toggleRef }) => {
+const NewBlog = ({ toggleRef }) => {
 	const dispatch = useDispatch()
 
 	const [newTitle, setNewTitle] = useState("")
@@ -26,16 +26,13 @@ const NewBlog = ({ setBlogs, toggleRef }) => {
 		}
 
 		try {
-			const returnedBlog = await blogService.create(blogObject)
-			setBlogs((prevBlogs) => {
-				const newBlogs = [...prevBlogs, returnedBlog]
-				return newBlogs.sort((a, b) => b.likes - a.likes)
-			})
+			dispatch(createBlog(blogObject))
 
 			toggleRef.current.toggleVisibility()
 
-			dispatch(showNotification(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`, 3))
+			dispatch(showNotification(`a new blog ${blogObject.title} by ${blogObject.author} added`, 3))
 		} catch (exception) {
+			console.error(exception)
 			dispatch(showError("failed to create new blog", 3))
 		}
 

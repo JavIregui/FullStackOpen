@@ -1,13 +1,14 @@
 import { useState } from "react"
-import loginService from "../services/login"
-import blogService from "../services/blogs"
 import Notification from "./Notification"
 
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { showNotification, showError } from "../reducers/notificationReducer"
+import { loginUser } from "../reducers/userReducer"
 
-const Login = ({ setUser }) => {
+const Login = () => {
 	const dispatch = useDispatch()
+
+	const user = useSelector((state) => state.user)
 
 	const [username, setUsername] = useState("")
 	const [password, setPassword] = useState("")
@@ -16,17 +17,9 @@ const Login = ({ setUser }) => {
 		event.preventDefault()
 
 		try {
-			const user = await loginService.login({
-				username,
-				password,
-			})
+			const loggedUser = await dispatch(loginUser(username, password))
 
-			window.localStorage.setItem("loggedUser", JSON.stringify(user))
-			blogService.setToken(user.token)
-
-			setUser(user)
-
-			dispatch(showNotification(`logged in successfully as ${user.name}`, 3))
+			dispatch(showNotification(`logged in successfully as ${loggedUser.name}`, 3))
 		} catch (exception) {
 			dispatch(showError("wrong username or password", 3))
 		}

@@ -1,35 +1,31 @@
-import React, { useState, useEffect, useRef } from "react"
-import blogService from "../services/blogs"
+import React, { useEffect, useRef } from "react"
 import Blog from "./Blog"
 import Notification from "./Notification"
 import NewBlog from "./NewBlog"
 import Togglable from "./Togglable"
 
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { showNotification, showError } from "../reducers/notificationReducer"
+import { initializeBlogs } from "../reducers/blogReducer"
+import { logoutUser } from "../reducers/userReducer"
 
-const BlogList = ({ user, setUser }) => {
+const BlogList = () => {
+	const blogs = useSelector((state) => state.blogs)
+	const user = useSelector((state) => state.user)
 	const dispatch = useDispatch()
-
-	const [blogs, setBlogs] = useState([])
 
 	const newBlogRef = useRef()
 
 	useEffect(() => {
 		try {
-			blogService.getAll().then((list) => {
-				const sortedList = list.sort((a, b) => b.likes - a.likes)
-				setBlogs(sortedList)
-			})
+			dispatch(initializeBlogs())
 		} catch (exception) {
 			dispatch(showError("Failed to fetch data from server", 3))
 		}
 	}, [])
 
 	const handleLogout = () => {
-		window.localStorage.removeItem("loggedUser")
-		setUser(null)
-		blogService.setToken(null)
+		dispatch(logoutUser())
 
 		dispatch(showNotification("logged out successfully", 3))
 	}
@@ -48,10 +44,7 @@ const BlogList = ({ user, setUser }) => {
 				buttonLabel='create new blog'
 				ref={newBlogRef}
 			>
-				<NewBlog
-					setBlogs={setBlogs}
-					toggleRef={newBlogRef}
-				/>
+				<NewBlog toggleRef={newBlogRef} />
 			</Togglable>
 
 			{blogs && blogs.length > 0 ? (
@@ -59,7 +52,6 @@ const BlogList = ({ user, setUser }) => {
 					<Blog
 						key={blog.id}
 						blog={blog}
-						setBlogs={setBlogs}
 						user={user}
 					/>
 				))

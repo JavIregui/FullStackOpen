@@ -1,35 +1,19 @@
-import { useState, useEffect } from "react"
-import blogService from "./services/blogs"
+import { useEffect } from "react"
 import Login from "./components/Login"
 import BlogList from "./components/BlogList"
 
+import { useDispatch, useSelector } from "react-redux"
+import { checkLogin } from "./reducers/userReducer"
+
 const App = () => {
-	const [user, setUser] = useState(null)
+	const user = useSelector((state) => state.user)
+	const dispatch = useDispatch()
 
 	useEffect(() => {
-		const loggedUserJSON = window.localStorage.getItem("loggedUser")
-		if (loggedUserJSON) {
-			const user = JSON.parse(loggedUserJSON)
-			setUser(user)
-			blogService.setToken(user.token)
-		} else {
-			setUser(null)
-			blogService.setToken(null)
-		}
+		dispatch(checkLogin())
 	}, [])
 
-	return (
-		<>
-			{user === null ? (
-				<Login setUser={setUser} />
-			) : (
-				<BlogList
-					user={user}
-					setUser={setUser}
-				/>
-			)}
-		</>
-	)
+	return <>{user === null ? <Login /> : <BlogList />}</>
 }
 
 export default App
