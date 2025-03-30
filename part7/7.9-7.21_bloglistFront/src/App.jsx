@@ -2,6 +2,7 @@ import { useEffect } from "react"
 import Login from "./components/Login"
 import BlogList from "./components/BlogList"
 import Users from "./components/Users"
+import User from "./components/User"
 
 import { useDispatch, useSelector } from "react-redux"
 import { checkLogin } from "./reducers/userReducer"
@@ -25,6 +26,10 @@ const App = () => {
 			<Route
 				path='/users'
 				element={user === null ? <Login /> : <Users />}
+			/>
+			<Route
+				path='/users/:id'
+				element={user === null ? <Login /> : <User />}
 			/>
 		</Routes>
 	)
